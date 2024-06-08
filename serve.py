@@ -11,9 +11,16 @@ import getpass
 from langserve import add_routes
 
 from fastapi import FastAPI
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
+from dotenv import load_dotenv
 
-os.environ["COHERE_API_KEY"] = getpass.getpass("Enter your Cohere API Key:")
+load_dotenv()
+
+os.environ["COHERE_API_KEY"] = os.getenv("COHERE_API_KEY")
+os.environ["LANGCHAIN_API_KEY"] = os.getenv("LANGCHAIN_API_KEY")
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
+os.environ["LANGCHAIN_PROJECT"] = "langchain-cohere-translator"
 
 
 # 1. Creating Prompt Template
@@ -47,7 +54,7 @@ chain  = prompt_template | model | parser
 app = FastAPI(
     title= "langchain-cohere server",
     version= "0.1",
-    description= "A simple langchain-cohere API server using LangChain's runnable interface"
+    description= "A simple langchain-cohere API server using LangChain's runnable interface",
 )
 
 # Adding chain route
@@ -55,7 +62,7 @@ app = FastAPI(
 add_routes(
     app,
     chain,
-    path="/chain"
+    path="/cohere-translator", 
 )
 
 
